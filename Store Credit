@@ -1,0 +1,77 @@
+#include <iostream>
+#include <fstream>
+
+using namespace std;
+class node{
+	private:
+		int price, pos;
+		node *next;
+	public:
+		node(int x, int y):price(x),pos(y),next(NULL){};
+		void insertnode(node *&first){
+			if (first==NULL)
+				first=this;
+			else if(first->next==NULL)
+				first->next=this;
+			else 
+				insertnode(first->next);			
+		}
+		void Find(const int C, int &x, int &y){
+			node *p, *q;
+			p=this;
+			q=next;
+			while(p!=NULL){
+				if (q!=NULL){
+					if(p->price+q->price==C){
+						x=p->pos;
+						y=q->pos;
+						return;
+					}else {
+						q=q->next;
+					}	
+				}else if(q==NULL){
+					p=p->next;
+					if(p!=NULL)
+						q=p->next;	
+				}
+			}
+		}
+		void freenodes(void){
+			if(next==NULL){
+				delete this;
+				return;
+			}else {
+				next->freenodes();
+			}
+			delete this;
+			return;			
+		}		
+};
+
+int main(int argc, char** argv) {
+	int N, C, I, P, x=1, pos1=0, pos2=0;
+	node *first=NULL;
+	//ifstream input("A-small-practice.in-4.txt");
+	ifstream input("A-large-practice.in-4.txt");
+	//ofstream out("OUT.txt");
+	input>>N;
+	//cin>>N;
+	while(x<=N){
+		input>>C>>I;
+		//cin>>C>>I;
+		for(int y=0;y<I;y++){
+			input>>P;
+			//cin>>P;
+			if (P<C){
+				node *temp= new node(P,y+1);
+				temp->insertnode(first);
+			}	
+		}
+		first->Find(C,pos1,pos2);
+		cout<<"Case #"<<x<<": "<<pos1<<" "<<pos2<<endl;
+		//out<<"Case #"<<x<<": "<<pos1<<" "<<pos2<<endl;
+		first=NULL;
+		x++;			
+	}
+	return 0;
+}
